@@ -26,8 +26,9 @@ class RoomsController < ApplicationController
     @room = Room.find(params[:room_id])
     
     #LJC use :user_id => current_user.id
-    Statement.create(:room_id => @room.id, :user_id => 1, :full_text => params[:full_text], :depth => params[:depth])
+    Statement.create(:room_id => @room.id, :user_id => 1, :full_text => params[:full_text], :depth => params[:depth], :follow_statement_id => params[:follow_statement_id])
 
+    session[:return_to] = "/room/" + @room.fb_comment_thread_id
     @statements = Statement.where(depth:1, room_id:@room.id).reverse
     respond_to do |format|
       format.js

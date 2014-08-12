@@ -15,7 +15,7 @@
 			<hr>
 			<h1>Statements</h1>
 			<h4><%= render partial: "rotating_questions", :locals => {depth: 1} %></h4>
-			<%= render partial: "add_response", :locals => {room_id: @room.id, depth:1, statement_id: 0} %>
+			<%= render partial: "add_response", :locals => {room_id: @room.id, depth:1, follow_statement_id: 0} %>
 			<br><br>
 			<div id="statements">
 				<%= render partial: "statements" %>
