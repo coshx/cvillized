@@ -9,6 +9,9 @@ Rails.application.routes.draw do
 
   resources :rooms
 
+  get 'room/:fb_comment_thread_id' => 'rooms#show'
+  post 'add_statement_to_room' => 'rooms#add_statement_to_room'
+  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

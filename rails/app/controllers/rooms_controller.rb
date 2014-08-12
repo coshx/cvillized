@@ -10,6 +10,28 @@ class RoomsController < ApplicationController
   # GET /rooms/1
   # GET /rooms/1.json
   def show
+    @invited_users_hash = Hash.new
+    Invitation.where(room: @room.id).each do |i|
+      if @invited_users_hash[i.invited_user_id]
+        @invited_users_hash[i.invited_user_id] += 1
+      else
+        @invited_users_hash[i.invited_user_id] = 1
+      end
+    end
+    
+    @statements = Statement.where(depth:1, room_id:@room.id).reverse
+  end
+  
+  def add_statement_to_room
+    @room = Room.find(params[:room_id])
+    
+    #LJC use :user_id => current_user.id
+    Statement.create(:room_id => @room.id, :user_id => 1, :full_text => params[:full_text], :depth => params[:depth])
+
+    @statements = Statement.where(depth:1, room_id:@room.id).reverse
+    respond_to do |format|
+      format.js
+    end
   end
 
   # GET /rooms/new
@@ -64,7 +86,7 @@ class RoomsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_room
-      @room = Room.find(params[:id])
+      @room = Room.find_by_fb_comment_thread_id(params[:fb_comment_thread_id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

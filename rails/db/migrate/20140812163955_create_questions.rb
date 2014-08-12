@@ -4,7 +4,8 @@ class CreateQuestions < ActiveRecord::Migration
       t.integer :room_id
       t.integer :parent_statement_id
       t.text :full_text
-      t.integer :user_id
+      t.integer :questioned_user_id
+      t.integer :depth
 
       t.timestamps
     end

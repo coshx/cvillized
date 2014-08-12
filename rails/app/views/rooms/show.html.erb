@@ -1,9 +1,29 @@
-<p id="notice"><%= notice %></p>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Fb comment thread:</strong>
-  <%= @room.fb_comment_thread_id %>
-</p>
-
-<%= link_to 'Edit', edit_room_path(@room) %> |
-<%= link_to 'Back', rooms_path %>
+			<h1>Facebook Comment Thread</h1>
+			<%= @room.fb_comment_thread_id %><br>
+			<br>
+			<hr>
+			<h1>Invitations</h1>
+			<% @invited_users_hash.each do |u_id, q| %>
+				<span class="glyphicon glyphicon-user"></span> <%= User.find(u_id).username %> (<%= q %>)<br>
+			<% end %>
+			<br>
+			<hr>
+			<h1>Statements</h1>
+			<h4><%= render partial: "rotating_questions", :locals => {depth: 1} %></h4>
+			<%= render partial: "add_response", :locals => {room_id: @room.id, depth:1, statement_id: 0} %>
+			<br><br>
+			<div id="statements">
+				<%= render partial: "statements" %>
+			</div>
+			<br>
+			<br>
+			<%#= link_to 'Edit', edit_room_path(@room) %>
+			<%#= link_to 'Back', rooms_path %>
+		</div>
+	</div>
+</div>

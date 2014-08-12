@@ -1,0 +1,48 @@
+<% indentation = 20 %>
+<% @statements.each do |s1| %>
+	<div style="width:50%; margin-left:<%= 0 * indentation %>px;" class="rinku">
+		<h3><%= User.find(s1.user_id).username %>:</h3>
+		<span class="glyphicon glyphicon-comment"></span> <%= raw(Rinku.auto_link(simple_format(s1.full_text, html_options={}, options={}), :all, 'target="_blank"')) %><br>
+		<div style="width:50%; margin-left:<%= 1 * indentation %>px;" class="rinku">
+			<h4><%= render partial: "rotating_questions", :locals => {depth: 2} %></h4>
+			<% if current_user.id == s1.user_id %>
+				<%= render partial: "add_response", :locals => {room_id: @room.id, depth:2, statement_id: s1.id} %>
+			<% end %>
+			<br>
+			<% Question.where(depth:2, questioned_user_id:s1.user_id).each do |q2| %>
+				<h3><%= q2.full_text %></h3><br>
+			<% end %>
+			<% Statement.where(depth:2, user_id:s1.user_id).each do |s2| %>
+				<span class="glyphicon glyphicon-comment"></span> <%= raw(Rinku.auto_link(simple_format(s2.full_text, html_options={}, options={}), :all, 'target="_blank"')) %><br>
+				<br>
+				<% Question.where(depth:3, questioned_user_id:s1.user_id).each do |q3| %>
+					<h3><%= q3.full_text %></h3><br>
+				<% end %>
+				<div style="width:50%; margin-left:<%= 2 * indentation %>px;" class="rinku">
+					<% Statement.where(depth:3, user_id:s1.user_id).each do |s3| %>
+						<span class="glyphicon glyphicon-comment"></span> <%= raw(Rinku.auto_link(simple_format(s3.full_text, html_options={}, options={}), :all, 'target="_blank"')) %><br>
+						<br>
+						<% Question.where(depth:4, questioned_user_id:s1.user_id).each do |q4| %>
+							<h3><%= q4.full_text %></h3><br>
+						<% end %>
+						<div style="width:50%; margin-left:<%= 3 * indentation %>px;" class="rinku">
+							<% Statement.where(depth:4, user_id:s1.user_id).each do |s4| %>
+								<span class="glyphicon glyphicon-comment"></span> <%= raw(Rinku.auto_link(simple_format(s4.full_text, html_options={}, options={}), :all, 'target="_blank"')) %><br>
+								<br>
+								<% Question.where(depth:5, questioned_user_id:s1.user_id).each do |q5| %>
+									<h3><%= q5.full_text %></h3><br>
+								<% end %>
+								<div style="width:50%; margin-left:<%= 4 * indentation %>px;" class="rinku">
+									<% Statement.where(depth:5, user_id:s1.user_id).each do |s4| %>
+										<span class="glyphicon glyphicon-comment"></span> <%= raw(Rinku.auto_link(simple_format(s5.full_text, html_options={}, options={}), :all, 'target="_blank"')) %><br>
+										<br>
+									<% end %>
+								</div>
+							<% end %>
+						</div>
+					<% end %>
+				</div>
+			<% end %>
+		</div>
+	</div>
+<% end %>
