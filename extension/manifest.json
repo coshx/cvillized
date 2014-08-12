@@ -9,7 +9,7 @@
     {
       "matches": ["https://*.facebook.com/*"],
       "css": ["stylesheets/cvillized.css"],
-      "js": ["javascripts/jquery-2.1.1.min.js", "javascripts/cvillized.js"]
+      "js": ["javascripts/jquery-2.1.1.min.js", "javascripts/underscore-1.6.0.min.js", "javascripts/cvillized.js"]
     }
   ],
 
@@ -18,8 +18,18 @@
       "19": "images/icon-19.png",
       "38": "images/icon-38.png"
     },
+    "default_title": "Human Up",
     "default_popup": "cvillized.html"
   },
+  "background": {
+    "scripts": ["javascripts/background.js"],
+    "persistent": true
+  },
+  "permissions": [
+    "declarativeContent", 
+    "activeTab",
+    "*://*/*"
+  ],
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",
