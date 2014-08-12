@@ -1,6 +1,6 @@
 
 var cvillized = {
-  _port: chrome.runtime.connect(),
+  apiUrl: "http://localhost:3000/analyze_comment",
 
   registerDOMChangeListener: function() {
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
@@ -28,9 +28,9 @@ var cvillized = {
 
   // ansync
   analyzeComment: function(commentHtml, callback) {
-    setTimeout(function() {
-      callback(commentHtml);
-    }, 1000);
+  	$.post(cvillized.apiUrl, {comment: commentHtml}).done(function(newHtml) {
+  		callback(newHtml);
+  	});
   }
 
 };
