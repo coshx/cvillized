@@ -5,11 +5,25 @@
   "description": "Human Up: make conversations more cvillized",
   "version": "1.0",
 
-  "permissions": [
-    "https://cvillized.com/"
+  "content_scripts": [
+    {
+      "matches": ["https://*.facebook.com/*"],
+      "css": ["stylesheets/cvillized.css"],
+      "js": ["javascripts/jquery-2.1.1.min.js", "javascripts/cvillized.js"]
+    }
   ],
-  "browser_action": {
-    "default_icon": "icon.png",
+
+  "page_action": {
+    "default_icon": {
+      "19": "images/icon-19.png",
+      "38": "images/icon-38.png"
+    },
     "default_popup": "cvillized.html"
+  },
+  "icons": {
+    "16": "images/icon-16.png",
+    "32": "images/icon-32.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
   }
 }
