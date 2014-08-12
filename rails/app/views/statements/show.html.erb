@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Room:</strong>
+  <%= @statement.room_id %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @statement.user_id %>
+</p>
+
+<p>
+  <strong>Full text:</strong>
+  <%= @statement.full_text %>
+</p>
+
+<p>
+  <strong>Depth:</strong>
+  <%= @statement.depth %>
+</p>
+
+<%= link_to 'Edit', edit_statement_path(@statement) %> |
+<%= link_to 'Back', statements_path %>
