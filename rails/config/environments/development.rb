@@ -36,6 +36,6 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
   
   config.facebook_id = ENV['FACEBOOK_APP_ID']
-  config.facebook_secret = ENV['FACEBOOK_SECRET']  
+  config.facebook_secret = ENV['FACEBOOK_SECRET']
 
 end
