@@ -1,48 +1,56 @@
-<% indentation = 20 %>
+<% indentation = 40 %>
 <% @statements.each do |s1| %>
-	<div style="width:50%; margin-left:<%= 0 * indentation %>px;" class="rinku">
+	<hr>
+	<div style="width:600px; margin-left:<%= 0 * indentation %>px;" class="rinku">
 		<h3><%= User.find(s1.user_id).username %>:</h3>
-		<span class="glyphicon glyphicon-comment"></span> <%= raw(Rinku.auto_link(simple_format(s1.full_text, html_options={}, options={}), :all, 'target="_blank"')) %><br>
-		<div style="width:50%; margin-left:<%= 1 * indentation %>px;" class="rinku">
+		
+		<h4><%= render partial: "rotating_questions", :locals => {depth: 1} %></h4>
+		<%= raw(Rinku.auto_link(simple_format("<span class='glyphicon glyphicon-comment'></span>&nbsp;&nbsp;" + s1.full_text, html_options={}, options={}), :all, 'target="_blank"')) %>
+
+		<% s2 = Statement.find_by_follow_statement_id(s1.id) %>
+		<div style="margin-left:<%= 1 * indentation %>px;" class="rinku">
 			<h4><%= render partial: "rotating_questions", :locals => {depth: 2} %></h4>
-			<% if current_user.id == s1.user_id %>
-				<%= render partial: "add_response", :locals => {room_id: @room.id, depth:2, statement_id: s1.id} %>
-			<% end %>
-			<br>
-			<% Question.where(depth:2, questioned_user_id:s1.user_id).each do |q2| %>
-				<h3><%= q2.full_text %></h3><br>
-			<% end %>
-			<% Statement.where(depth:2, user_id:s1.user_id).each do |s2| %>
-				<span class="glyphicon glyphicon-comment"></span> <%= raw(Rinku.auto_link(simple_format(s2.full_text, html_options={}, options={}), :all, 'target="_blank"')) %><br>
-				<br>
-				<% Question.where(depth:3, questioned_user_id:s1.user_id).each do |q3| %>
-					<h3><%= q3.full_text %></h3><br>
-				<% end %>
-				<div style="width:50%; margin-left:<%= 2 * indentation %>px;" class="rinku">
-					<% Statement.where(depth:3, user_id:s1.user_id).each do |s3| %>
-						<span class="glyphicon glyphicon-comment"></span> <%= raw(Rinku.auto_link(simple_format(s3.full_text, html_options={}, options={}), :all, 'target="_blank"')) %><br>
-						<br>
-						<% Question.where(depth:4, questioned_user_id:s1.user_id).each do |q4| %>
-							<h3><%= q4.full_text %></h3><br>
-						<% end %>
-						<div style="width:50%; margin-left:<%= 3 * indentation %>px;" class="rinku">
-							<% Statement.where(depth:4, user_id:s1.user_id).each do |s4| %>
-								<span class="glyphicon glyphicon-comment"></span> <%= raw(Rinku.auto_link(simple_format(s4.full_text, html_options={}, options={}), :all, 'target="_blank"')) %><br>
-								<br>
-								<% Question.where(depth:5, questioned_user_id:s1.user_id).each do |q5| %>
-									<h3><%= q5.full_text %></h3><br>
-								<% end %>
-								<div style="width:50%; margin-left:<%= 4 * indentation %>px;" class="rinku">
-									<% Statement.where(depth:5, user_id:s1.user_id).each do |s4| %>
-										<span class="glyphicon glyphicon-comment"></span> <%= raw(Rinku.auto_link(simple_format(s5.full_text, html_options={}, options={}), :all, 'target="_blank"')) %><br>
-										<br>
-									<% end %>
-								</div>
-							<% end %>
-						</div>
-					<% end %>
-				</div>
+			<% if s2 %>
+				<%= raw(Rinku.auto_link(simple_format("<span class='glyphicon glyphicon-comment'></span>&nbsp;&nbsp;" + s2.full_text, html_options={}, options={}), :all, 'target="_blank"')) %>
+			<% elsif current_user && current_user.id == s1.user_id %>
+				<%= render partial: "add_response", :locals => {room_id: @room.id, depth:2, follow_statement_id: s1.id} %>
 			<% end %>
 		</div>
+		
+		<% if s2 %>
+			<% s3 = Statement.find_by_follow_statement_id(s2.id) %>
+			<div style="margin-left:<%= 2 * indentation %>px;" class="rinku">
+				<h4><%= render partial: "rotating_questions", :locals => {depth: 3} %></h4>
+				<% if s3 %>
+					<%= raw(Rinku.auto_link(simple_format("<span class='glyphicon glyphicon-comment'></span>&nbsp;&nbsp;" + s3.full_text, html_options={}, options={}), :all, 'target="_blank"')) %>
+				<% elsif current_user && current_user.id == s2.user_id %>
+					<%= render partial: "add_response", :locals => {room_id: @room.id, depth:3, follow_statement_id: s2.id} %>
+				<% end %>
+			</div>
+		<% end %>
+
+		<% if s3 %>
+			<% s4 = Statement.find_by_follow_statement_id(s3.id) %>
+			<div style="margin-left:<%= 3 * indentation %>px;" class="rinku">
+				<h4><%= render partial: "rotating_questions", :locals => {depth: 4} %></h4>
+				<% if s4 %>
+					<%= raw(Rinku.auto_link(simple_format("<span class='glyphicon glyphicon-comment'></span>&nbsp;&nbsp;" + s4.full_text, html_options={}, options={}), :all, 'target="_blank"')) %>
+				<% elsif current_user && current_user.id == s3.user_id %>
+					<%= render partial: "add_response", :locals => {room_id: @room.id, depth:4, follow_statement_id: s3.id} %>
+				<% end %>
+			</div>
+		<% end %>
+
+		<% if s4 %>
+			<% s5 = Statement.find_by_follow_statement_id(s4.id) %>
+			<div style="margin-left:<%= 4 * indentation %>px;" class="rinku">
+				<h4><%= render partial: "rotating_questions", :locals => {depth: 5} %></h4>
+				<% if s5 %>
+					<%= raw(Rinku.auto_link(simple_format("<span class='glyphicon glyphicon-comment'></span>&nbsp;&nbsp;" + s5.full_text, html_options={}, options={}), :all, 'target="_blank"')) %>
+				<% elsif current_user && current_user.id == s4.user_id %>
+					<%= render partial: "add_response", :locals => {room_id: @room.id, depth:5, follow_statement_id: s4.id} %>
+				<% end %>
+			</div>
+		<% end %>
 	</div>
 <% end %>

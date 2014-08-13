@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20140812164002) do
 
   create_table "statements", force: true do |t|
     t.integer  "room_id"
+    t.integer  "follow_statement_id"
     t.integer  "user_id"
     t.text     "full_text"
     t.integer  "depth"
@@ -53,6 +54,11 @@ ActiveRecord::Schema.define(version: 20140812164002) do
   create_table "users", force: true do |t|
     t.string   "fb_api_user_id"
     t.string   "username"
+    t.string   "provider"
+    t.string   "uid"
+    t.string   "name"
+    t.string   "oauth_token"
+    t.datetime "oauth_expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
