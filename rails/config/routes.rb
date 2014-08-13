@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
   get 'room/:fb_comment_thread_id' => 'rooms#show'
   post 'add_statement_to_room' => 'rooms#add_statement_to_room'
+  post 'search_rooms' => 'rooms#search'
   get 'auth/:provider/callback', to: 'sessions#create'
   get 'auth/failure', to: redirect('/')
   get 'signout', to: 'sessions#destroy', as: 'signout'
@@ -21,7 +22,7 @@ Rails.application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  # root 'welcome#index'
+  root 'rooms#index'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

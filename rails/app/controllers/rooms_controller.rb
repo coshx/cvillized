@@ -22,6 +22,32 @@ class RoomsController < ApplicationController
     @statements = Statement.where(depth:1, room_id:@room.id).reverse
   end
   
+  def search
+    all_rooms = []
+    all_statements = []
+    params[:search_string].split.map { |s| s.gsub(/\W/, '') }.each do |w|
+      if w.size > 2
+        all_statements += Statement.full_text_search(w)
+        all_rooms += Room.description_text_search(w)
+      end
+    end
+    all_statements.each do |s|
+      all_rooms << Room.find(s.room_id)
+    end
+    rooms_by_frequency = all_rooms.each_with_object(Hash.new(0)){ |m,h| h[m] += 1 }.sort_by{ |v,k| k }.reverse
+
+    puts "room frequency" 
+    puts rooms_by_frequency
+    @rooms = []
+    rooms_by_frequency.each do |g|
+      @rooms << g[0]
+    end
+    
+    respond_to do |format|
+      format.js
+    end  
+  end
+  
   def add_statement_to_room
     @room = Room.find(params[:room_id])
     
@@ -87,7 +113,7 @@ class RoomsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_room
-      @room = Room.find_by_fb_comment_thread_id(params[:fb_comment_thread_id])
+      @room = Room.find_or_create_by(fb_comment_thread_id: params[:fb_comment_thread_id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

@@ -23,3 +23,17 @@ jQuery ->
 						$(loading_id).hide()
 						$(success_message_id).fadeIn().delay(4000).fadeOut('slow')
 		, ".add_new_statement_to_room"
+	$(document).on "keyup", "#search_rooms", (event) ->
+		if event.keyCode is 13 && $('#search_rooms').val().length > 1
+			$('#loading_rooms').show()
+			$('#rooms_list').hide
+			$.ajax
+				type: "POST",
+				url: "/search_rooms",
+				data: {
+					"search_string": $('#search_rooms').val()
+				}
+				success: ->
+					$('#rooms_list').show
+					$('#loading_rooms').hide()
+			$('#search_rooms').val('')
