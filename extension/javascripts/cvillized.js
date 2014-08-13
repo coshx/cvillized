@@ -25,7 +25,7 @@ var cvillized = {
       var commentId = RegExp.$2
       if($(el).attr('data-cvillized') != 'true') {
       	$(el).text("[cvillized is analyzing this comment...");
-	      cvillized.analyzeComment(origHtml, function(newHtml) {
+	      cvillized.analyzeComment({commentHtml: origHtml, threadId: threadId, commentId: commentId}, function(newHtml) {
 	        $(el).html(newHtml);
 	        $(el).attr('data-cvillized', 'true')
 	      });
@@ -34,8 +34,8 @@ var cvillized = {
   },
 
   // ansync
-  analyzeComment: function(commentHtml, callback) {
-  	$.get(cvillized.apiUrl, {commentHtml: commentHtml}).done(function(data) {
+  analyzeComment: function(apiArgs, callback) {
+  	$.get(cvillized.apiUrl, apiArgs).done(function(data) {
   		callback(data.replacementHtml);
   	});
   }
