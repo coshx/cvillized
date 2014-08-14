@@ -39,6 +39,11 @@ gem 'spring',        group: :development
 # Use unicorn as the app server
 gem 'unicorn'
 
+# Use thin in development since we need https
+group :development, :test do
+  gem 'thin'
+end
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
