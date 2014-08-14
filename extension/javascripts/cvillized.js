@@ -1,3 +1,8 @@
+function decodeHtml(input){
+  var e = document.createElement('div');
+  e.innerHTML = input;
+  return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+}
 
 var cvillized = {
   apiUrl: "http://localhost:3000/extension/analyze_comment.json",
@@ -18,24 +23,24 @@ var cvillized = {
 
   analyzeComments: function() {
     $(".UFICommentBody").each(function(index, el) { 
-      var origHtml = $(el).html();
-      // Get thread id and comment id from from Facebook
-      $(el).attr('data-reactid').match(/.+comment([0-9]+)\_([0-9]+).+/)
-      var threadId = RegExp.$1
-      var commentId = RegExp.$2
       if($(el).attr('data-cvillized') != 'true') {
+        var origHtml = $(el).html();
+        // Get thread id and comment id from from Facebook
+        $(el).attr('data-reactid').match(/.+comment([0-9]+)\_([0-9]+).+/)
+        var threadId = RegExp.$1
+        var commentId = RegExp.$2
       	$(el).text("[cvillized is analyzing this comment...");
-	      cvillized.analyzeComment({commentHtml: origHtml, threadId: threadId, commentId: commentId}, function(newHtml) {
-	        $(el).html(newHtml);
-	        $(el).attr('data-cvillized', 'true')
-	      });
+        $(el).attr('data-cvillized', 'true')
+        cvillized.analyzeComment({commentHtml: origHtml, threadId: threadId, commentId: commentId}, function(newHtml) {
+          $(el).html(decodeHtml(newHtml));
+        });
       }
     });
   },
 
   // ansync
   analyzeComment: function(apiArgs, callback) {
-  	$.get(cvillized.apiUrl, apiArgs).done(function(data) {
+  	$.post(cvillized.apiUrl, apiArgs).done(function(data) {
   		callback(data.replacementHtml);
   	});
   }

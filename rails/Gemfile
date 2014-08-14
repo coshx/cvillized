@@ -42,6 +42,11 @@ gem 'unicorn'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+group :test, :development do
+  gem 'pry'
+  gem 'pry-nav'
+end
+
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 

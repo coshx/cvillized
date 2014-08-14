@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   resources :rooms
 
-  get 'extension/analyze_comment' => "extension#analyze_comment"
+  post 'extension/analyze_comment' => "extension#analyze_comment"
 
   get 'room/:fb_comment_thread_id' => 'rooms#show'
   post 'add_statement_to_room' => 'rooms#add_statement_to_room'
