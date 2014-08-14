@@ -40,7 +40,7 @@ var cvillized = {
   rules: [
     new Rule({
       description: "globally turn the f-word into an f-bomb",
-      search: /pussy/ig,
+      search: /fuck/ig,
       img: 'images/f-bomb.png',
       imgAlt: 'f-bomb'
     }),
