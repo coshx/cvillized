@@ -80,9 +80,10 @@ var cvillized = {
     // TODO: check if rule.domain matches current page
 
     // Find all the matches on current page and replace them
-    $(".UFICommentBody").each( function() {
-      $(this).html($(this).html().replace(rule.search, rule.html()));
-    });
+    var bodyHtml = $("#contentArea").html();
+    bodyHtml = bodyHtml.replace(rule.search, rule.html());
+
+    $("#contentArea").html(bodyHtml);
   },
 
   cvillize: function() {
