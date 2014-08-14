@@ -40,7 +40,7 @@ var cvillized = {
   rules: [
     new Rule({
       description: "globally turn the f-word into an f-bomb",
-      search: /fuck/ig,
+      search: /pussy/ig,
       img: 'images/f-bomb.png',
       imgAlt: 'f-bomb'
     }),
@@ -80,10 +80,9 @@ var cvillized = {
     // TODO: check if rule.domain matches current page
 
     // Find all the matches on current page and replace them
-    var bodyHtml = $("body").html();
-    bodyHtml = bodyHtml.replace(rule.search, rule.html());
-
-    $("body").html(bodyHtml);
+    $(".UFICommentBody").each( function() {
+      $(this).html($(this).html().replace(rule.search, rule.html()));
+    });
   },
 
   cvillize: function() {
