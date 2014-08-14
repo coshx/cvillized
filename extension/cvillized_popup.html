@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html ng-app="cvillized_popup">
   <head>
     <title>Cvillized Popup</title>
     <link rel="stylesheet" type="text/css" href="stylesheets/cvillized_popup.css">
@@ -19,7 +19,7 @@
       <h2>Preferences</h2>
       [TODO: allow setting some global preferences]
     </div>
-    <div class="rules">
+    <div class="rules" ng-controller="RulesController">
       <h2>Rules</h2>
       <table>
         <thead>
@@ -30,28 +30,23 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Stupid is as Stupid Does</td>
-            <td>Calling someone else or their idea stupid is what stupid is not cvillized.</td>
-            <td><input type="checkbox" checked="checked"></td>
+          <tr ng-repeat="rule in rules" ng-controller="RuleController">
+            <td ng-click="open(rule)">{{rule.name}}</td>
+            <td ng-click="open(rule)">{{rule.description}}</td>
+            <td>YES</td>
           </tr>
         </tbody>
       </table>
-    </div>
-
-    <div class="testing" ng-data-bind="greeting">
-      <ul ng-controller="ListController">
-          <li ng-repeat="item in items" ng-controller="ItemController">
-              <div ng-click="open(item)">{{item.content}}</div>        
-          </li>
-          <hr>
-          <ng-switch on="anyItemOpen()">
-           <div ng-switch-when="true">
-               <div ng-controller="ItemController">
-                   {{opened.name}}: overlay: tweet, share, pin
-               </div>  
-           </div>
-      </ul>
+      <ng-switch on="anyRuleOpen()">
+      <div ng-switch-when="true">
+        <div ng-controller="RuleController">
+          <input value="{{openRule.name}}" placeholder="Name">
+          <input value="{{openRule.description}}" placeholder="Description">
+          <br/>
+          <input value="{{openRule.search}}" placeholder="Search">
+          <input value="{{openRule.replace}}" placeholder="Replace">
+        </div>
+      </div>
     </div>
 
     <script type="text/javascript" src="javascripts/jquery-2.1.1.min.js"></script>

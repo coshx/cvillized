@@ -1,31 +1,34 @@
-function ItemController($scope) {
+function RuleController($scope) {
 }
 
-function ListController($scope) {
-    $scope.items = [
-        {name: 'item1', content: 'content1'},
-        {name: 'item2', content: 'content2'},
-        {name: 'item3', content: 'content3'}
+function RulesController($scope) {
+    $scope.rules = [
+        {name: 'poo', description: 'Remove shitty comments'},
+        {name: 'f-bomb', description: 'f-bombs are awesome'},
+        {name: 'item3', description: 'content3'}
     ];
     
-    $scope.open = function(item){
-        if ($scope.isOpen(item)){
-            $scope.opened = undefined;
+    $scope.open = function(rule){
+        if ($scope.isOpen(rule)){
+            $scope.openRule = undefined;
         } else {
-            $scope.opened = item;
+            $scope.openRule = rule;
         }        
     };
     
-    $scope.isOpen = function(item){
-        return $scope.opened === item;
+    $scope.isOpen = function(rule){
+        return $scope.openRule === rule;
     };
     
-    $scope.anyItemOpen = function() {
-        return $scope.opened !== undefined;
+    $scope.anyRuleOpen = function() {
+        return $scope.openRule !== undefined;
     };
     
     $scope.close = function() {
-        $scope.opened = undefined;
+        $scope.openRule = undefined;
     };
 }
 
+angular.module('cvillized_popup', []).
+controller('RuleController', ['$scope', RuleController]).
+controller('RulesController', ['$scope', RulesController])

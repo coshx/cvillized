@@ -71,7 +71,6 @@ var cvillized = {
   init: function() {
     cvillized.cvillize();
     cvillized.registerDOMChangeListener();
-    cvillized.registerRuleInfoClickListener();
   },
 
   registerDOMChangeListener: function() {
@@ -87,23 +86,19 @@ var cvillized = {
     });
   },
 
-  registerRuleInfoClickListener: function() {
-    $(document).on('click', ':data(cvillized-rule)', function() {
-      var element = $(this);
-      element.find
-      if (element.data('cvillized-'))
-    });
-  }
-
   applyRule: function(rule, rule_index) {
     console.log("Applying rule " + rule_index + ": " + rule.description);
     // TODO: check if rule.domain matches current page
 
     // Find all the matches on current page and replace them
-    var bodyHtml = $("#contentArea").html();
-    bodyHtml = bodyHtml.replace(rule.search, rule.html());
+    var contentElement = "body";
+    if ($("#contentArea").length > 0) {
+      contentElement = "#contentArea";
+    }
+    var contentHtml = $(contentElement).html();
+    contentHtml = contentHtml.replace(rule.search, rule.html());
 
-    $("#contentArea").html(bodyHtml);
+    $(contentElement).html(contentHtml);
   },
 
   cvillize: function() {
