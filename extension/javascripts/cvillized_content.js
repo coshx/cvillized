@@ -75,15 +75,32 @@ var cvillized = {
     });
   },
 
+  globalSelector: function() {
+    if(window.location.host.indexOf("facebook.com") != -1) {
+      return "[role^=article], .UFICommentBody";
+    }
+    else if(window.location.host.indexOf("google.") != -1) {
+      return "#rcnt";
+    }
+    else {
+      return "body";
+    }
+  },
+
   applyRule: function(rule, rule_index) {
     console.log("Applying rule " + rule_index + ": " + rule.description);
     // TODO: check if rule.domain matches current page
 
     // Find all the matches on current page and replace them
-    var bodyHtml = $("#contentArea").html();
-    bodyHtml = bodyHtml.replace(rule.search, rule.html());
+    var selector = cvillized.globalSelector();
+    $(selector).each( function() {
+      $(this).html($(this).html().replace(rule.search, rule.html()));
+    });
 
-    $("#contentArea").html(bodyHtml);
+    // var globalHtml = $(selector).html();
+    // globalHtml = globalHtml.replace(rule.search, rule.html());
+
+    // $(selector).html(globalHtml);
   },
 
   cvillize: function() {
