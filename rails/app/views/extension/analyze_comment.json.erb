@@ -1,7 +1,5 @@
 <% if @replace_by_poop %>
-	<% binding.pry %>
-	<% @replacementHtml = image_tag "poop.png" %>
+	{replacementHtml: "<%= render "poop.html", layout: false %>"}
+<% else %>
+	{"replacementHtml": "<%= @replacementHtml %>"},
 <% end %>
-{
-	"replacementHtml": "<%= @replacementHtml %>"
-}
