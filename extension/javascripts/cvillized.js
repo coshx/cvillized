@@ -5,7 +5,7 @@ function decodeHtml(input){
 }
 
 var cvillized = {
-  apiUrl: "http://localhost:3000/extension/analyze_comment.json",
+  apiUrl: "https://localhost:3000/extension/analyze_comment.json",
 
   registerDOMChangeListener: function() {
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
