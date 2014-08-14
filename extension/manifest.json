@@ -8,8 +8,8 @@
   "content_scripts": [
     {
       "matches": ["https://*.facebook.com/*"],
-      "css": ["stylesheets/cvillized.css"],
-      "js": ["javascripts/jquery-2.1.1.min.js", "javascripts/underscore-1.6.0.min.js", "javascripts/cvillized.js"]
+      "css": ["stylesheets/cvillized_content.css"],
+      "js": ["javascripts/jquery-2.1.1.min.js", "javascripts/underscore-1.6.0.min.js", "javascripts/cvillized_popup.js"]
     }
   ],
 
