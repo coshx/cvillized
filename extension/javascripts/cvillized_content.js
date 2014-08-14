@@ -5,8 +5,8 @@ function decodeHtml(input){
 }
 
 function Rule(data) {
+  this.name = data.name;
   this.description = data.description;
-  this.domain = data.domain;
   this.search = data.search;
   this.img = data.img;
   this.imgAlt = data.imgAlt;
@@ -32,6 +32,14 @@ function Rule(data) {
       templateParams = {}
     }
 
+    // surround the replacement text to tag the rule we used
+    templateHtml = '<span data-cvillized-rule="<%= rule.name %>">'
+                    + '<span data-cvillized-replacement>'
+                      + templateHtml 
+                    + '</span>'
+                  + '</span>';
+    templateParams.rule = this;
+
     return _.template(templateHtml, templateParams);
   }
 }
@@ -39,17 +47,20 @@ function Rule(data) {
 var cvillized = {
   rules: [
     new Rule({
+      name: 'f-bomb',
       description: "globally turn the f-word into an f-bomb",
       search: /fuck/ig,
       img: 'images/f-bomb.png',
       imgAlt: 'f-bomb'
     }),
     new Rule({
+      name: 'poo',
       description: "globally turn poo words into poo",
       search: /poop(?:y)?|shit(?:ty)?|crap(?:py)?/ig,
       img: 'images/poo.png'
     }),
     new Rule({
+      name: 'stupid',
       description: "stupid is as stupid does",
       search: '/stupid[a-z]*\b/ig',
       txt: 'stupendous'
@@ -60,6 +71,7 @@ var cvillized = {
   init: function() {
     cvillized.cvillize();
     cvillized.registerDOMChangeListener();
+    cvillized.registerRuleInfoClickListener();
   },
 
   registerDOMChangeListener: function() {
@@ -74,6 +86,14 @@ var cvillized = {
       attributes: false
     });
   },
+
+  registerRuleInfoClickListener: function() {
+    $(document).on('click', ':data(cvillized-rule)', function() {
+      var element = $(this);
+      element.find
+      if (element.data('cvillized-'))
+    });
+  }
 
   applyRule: function(rule, rule_index) {
     console.log("Applying rule " + rule_index + ": " + rule.description);
