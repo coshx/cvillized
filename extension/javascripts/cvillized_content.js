@@ -4,73 +4,30 @@ function decodeHtml(input){
   return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
 }
 
-function Rule(data) {
-  this.name = data.name;
-  this.description = data.description;
-  this.search = data.search;
-  this.img = data.img;
-  this.imgAlt = data.imgAlt;
-  if (!this.imgAlt) {
-    this.imgAlt = 'cvillized replacement';
-  }
-  this.txt = data.txt;
-
-  this.html = function() {
-    var templateHtml, templateParams;
-
-    if (this.img) {
-      templateHtml = '<img src="<%= img %>" alt="<%= imgAlt %>" height="24px"/>';
-      templateParams = {
-        img: chrome.extension.getURL(this.img),
-        imgAlt: this.imgAlt
-      }
-    } else if (this.txt) {
-      templateHtml = '<%= txt %>';
-      templateParams = { txt: this.txt };
-    } else {
-      templateHtml = '<b>[hidden by cvillized]</b>';
-      templateParams = {}
-    }
-
-    // surround the replacement text to tag the rule we used
-    templateHtml = '<span data-cvillized-rule="<%= rule.name %>">'
-                    + '<span data-cvillized-replacement>'
-                      + templateHtml 
-                    + '</span>'
-                  + '</span>';
-    templateParams.rule = this;
-
-    return _.template(templateHtml, templateParams);
-  }
-}
-
 var cvillized = {
-  rules: [
-    new Rule({
-      name: 'f-bomb',
-      description: "globally turn the f-word into an f-bomb",
-      search: /fuck/ig,
-      img: 'images/f-bomb.png',
-      imgAlt: 'f-bomb'
-    }),
-    new Rule({
-      name: 'poo',
-      description: "globally turn poo words into poo",
-      search: /poop(?:y)?|shit(?:ty)?|crap(?:py)?/ig,
-      img: 'images/poo.png'
-    }),
-    new Rule({
-      name: 'stupid',
-      description: "stupid is as stupid does",
-      search: '/stupid[a-z]*\b/ig',
-      txt: 'stupendous'
-    })
-  ],
+  rules: [],
 
   /* cvillize the page and register an event listener for changes to the page */
   init: function() {
     cvillized.cvillize();
     cvillized.registerDOMChangeListener();
+    cvillized.requestRules();
+    cvillized.listenForRulesUpdate();
+  },
+
+  listenForRulesUpdate: function() {
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+      if (request.rules) {
+        cvillized.rules = request.rules;
+        cvillized.cvillize();
+      }
+    });
+  },
+
+  requestRules: function() {
+    chrome.runtime.sendMessage({rulesRequest: true}, function(response) {
+      cvillized.rules = response.rules;
+    });
   },
 
   registerDOMChangeListener: function() {
