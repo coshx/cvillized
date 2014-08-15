@@ -1,6 +1,35 @@
 // currently content is injected via manifest.json
 // so this is unneeded.
 // TODO: figure out how to inject content into facebook and other sites using fb comments
+// function setRuleHtml(data, params) {
+//   console.log("coucou");
+//   var templateHtml, templateParams;
+
+//   if (params.img) {
+//     templateHtml = '<img src="<%= img %>" alt="<%= imgAlt %>" height="24px"/>';
+//     templateParams = {
+//       img: chrome.extension.getURL(params.img),
+//       imgAlt: params.imgAlt
+//     }
+//   } else if (params.txt) {
+//     templateHtml = '<%= txt %>';
+//     templateParams = { txt: params.txt };
+//   } else {
+//     templateHtml = '<b>[hidden by cvillized]</b>';
+//     templateParams = {}
+//   }
+
+//   // surround the replacement text to tag the rule we used
+//   templateHtml = '<span data-cvillized-rule="<%= rule.name %>">'
+//                   + '<span data-cvillized-replacement>'
+//                     + templateHtml 
+//                   + '</span>'
+//                 + '</span>';
+//   templateParams.rule = params;
+
+//   return _.template(templateHtml, templateParams);
+// }
+
 function Rule(data) {
   this.name = data.name;
   this.description = data.description;
@@ -11,34 +40,6 @@ function Rule(data) {
     this.imgAlt = 'cvillized replacement';
   }
   this.txt = data.txt;
-
-  this.html = function() {
-    var templateHtml, templateParams;
-
-    if (this.img) {
-      templateHtml = '<img src="<%= img %>" alt="<%= imgAlt %>" height="24px"/>';
-      templateParams = {
-        img: chrome.extension.getURL(this.img),
-        imgAlt: this.imgAlt
-      }
-    } else if (this.txt) {
-      templateHtml = '<%= txt %>';
-      templateParams = { txt: this.txt };
-    } else {
-      templateHtml = '<b>[hidden by cvillized]</b>';
-      templateParams = {}
-    }
-
-    // surround the replacement text to tag the rule we used
-    templateHtml = '<span data-cvillized-rule="<%= rule.name %>">'
-                    + '<span data-cvillized-replacement>'
-                      + templateHtml 
-                    + '</span>'
-                  + '</span>';
-    templateParams.rule = this;
-
-    return _.template(templateHtml, templateParams);
-  }
 }
 
 var cvillizedBackground = {
@@ -47,20 +48,20 @@ var cvillizedBackground = {
     new Rule({
       name: 'f-bomb',
       description: "globally turn the f-word into an f-bomb",
-      search: /fuck/ig,
+      search: 'fuck',
       img: 'images/f-bomb.png',
       imgAlt: 'f-bomb'
     }),
     new Rule({
       name: 'poo',
       description: "globally turn poo words into poo",
-      search: /poop(?:y)?|shit(?:ty)?|crap(?:py)?/ig,
+      search: 'poop(?:y)?|shit(?:ty)?|crap(?:py)?',
       img: 'images/poo.png'
     }),
     new Rule({
       name: 'stupid',
       description: "stupid is as stupid does",
-      search: '/stupid[a-z]*\b/ig',
+      search: 'stupid[a-z]*\b',
       txt: 'stupendous'
     })
   ],
@@ -77,8 +78,9 @@ var cvillizedBackground = {
         cvillizedBackground.sendRulesToPage();
       }
     });
-  }
+  },
   listenForRulesRequests: function() {
+    console.log("kikoulool");
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       if (request.rulesRequest) {
         console.log("Got a rules request!");
