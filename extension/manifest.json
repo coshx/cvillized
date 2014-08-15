@@ -12,6 +12,7 @@
       "js": [
           "javascripts/jquery-2.1.1.min.js", 
           "javascripts/underscore-1.6.0.min.js", 
+          "javascripts/rule.js",
           "javascripts/cvillized_content.js"
       ]
     }
@@ -26,7 +27,7 @@
     "default_popup": "cvillized_popup.html"
   },
   "background": {
-    "scripts": ["javascripts/background.js"],
+    "scripts": ["javascripts/rule.js", "javascripts/background.js"],
     "persistent": true
   },
   "permissions": [

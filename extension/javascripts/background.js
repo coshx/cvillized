@@ -1,47 +1,3 @@
-// currently content is injected via manifest.json
-// so this is unneeded.
-// TODO: figure out how to inject content into facebook and other sites using fb comments
-// function setRuleHtml(data, params) {
-//   console.log("coucou");
-//   var templateHtml, templateParams;
-
-//   if (params.img) {
-//     templateHtml = '<img src="<%= img %>" alt="<%= imgAlt %>" height="24px"/>';
-//     templateParams = {
-//       img: chrome.extension.getURL(params.img),
-//       imgAlt: params.imgAlt
-//     }
-//   } else if (params.txt) {
-//     templateHtml = '<%= txt %>';
-//     templateParams = { txt: params.txt };
-//   } else {
-//     templateHtml = '<b>[hidden by cvillized]</b>';
-//     templateParams = {}
-//   }
-
-//   // surround the replacement text to tag the rule we used
-//   templateHtml = '<span data-cvillized-rule="<%= rule.name %>">'
-//                   + '<span data-cvillized-replacement>'
-//                     + templateHtml 
-//                   + '</span>'
-//                 + '</span>';
-//   templateParams.rule = params;
-
-//   return _.template(templateHtml, templateParams);
-// }
-
-function Rule(data) {
-  this.name = data.name;
-  this.description = data.description;
-  this.search = data.search;
-  this.img = data.img;
-  this.imgAlt = data.imgAlt;
-  if (!this.imgAlt) {
-    this.imgAlt = 'cvillized replacement';
-  }
-  this.txt = data.txt;
-}
-
 var cvillizedBackground = {
   // TODO: grab these default rules from the server
   rules: [
@@ -50,43 +6,45 @@ var cvillizedBackground = {
       description: "globally turn the f-word into an f-bomb",
       search: 'fuck',
       img: 'images/f-bomb.png',
-      imgAlt: 'f-bomb'
+      imgAlt: 'f-bomb',
+      enabled: true
     }),
     new Rule({
       name: 'poo',
       description: "globally turn poo words into poo",
       search: 'poop(?:y)?|shit(?:ty)?|crap(?:py)?',
-      img: 'images/poo.png'
+      img: 'images/poo.png',
+      enabled: true
     }),
     new Rule({
       name: 'stupid',
       description: "stupid is as stupid does",
-      search: 'stupid[a-z]*\b',
-      txt: 'stupendous'
+      search: 'stupid[a-z]*\\b',
+      txt: 'stupendous',
+      enabled: true
     })
   ],
 
   sendRulesToPage: function() {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {rules: rules});
+      chrome.tabs.sendMessage(tabs[0].id, {rules: cvillizedBackground.rules});
     });
   },
   listenForRulesUpdates: function() {
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       if (request.rules) {
+        console.log("Got a rules update");
         cvillizedBackground.rules = request.rules;
         cvillizedBackground.sendRulesToPage();
       }
     });
   },
+
   listenForRulesRequests: function() {
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       if (request.rulesRequest) {
         console.log("Got a rules request!");
         sendResponse({rules: cvillizedBackground.rules});
-      } else {
-        console.log("Got some other request");
-        sendResponse({rules: "dont got none"});
       }
     });
   }

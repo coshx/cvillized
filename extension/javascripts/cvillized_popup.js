@@ -2,11 +2,7 @@ function RuleController($scope) {
 }
 
 function RulesController($scope) {
-  $scope.rules = [
-    {name: 'poo', description: 'Remove shitty comments', search: '', replace: '', enabled: true},
-    {name: 'f-bomb', description: 'f-bombs are awesome', search: '', replace: '', enabled: true},
-    {name: 'item3', description: 'content3', search: '', replace: '', enabled: false}
-  ];
+  $scope.rules = []; // this come from background.js
   
   $scope.open = function(rule){
     if ($scope.isOpen(rule)){
@@ -31,14 +27,26 @@ function RulesController($scope) {
   };
 
   $scope.refresh = function() {
-    debugger
+    var element = angular.element($('.rules'));
     chrome.runtime.sendMessage({rulesRequest: true}, function(response) {
-      debugger
       $scope.rules = response.rules;
+      element.scope().$apply();
     });
-  }
+  };
+
+  $scope.add = function() {
+    $scope.rules.push(new Rule({}));
+  };
+
+  $scope.save = function() {
+    chrome.runtime.sendMessage({rules: $scope.rules}, function(response) {
+      console.log("saved rules");
+    });
+  };
+
+  $scope.refresh();
 }
 
-angular.module('cvillized_popup', []).
-controller('RuleController', ['$scope', RuleController]).
-controller('RulesController', ['$scope', RulesController])
+var app = angular.module('cvillized_popup', []);
+app.controller('RuleController', ['$scope', RuleController]);
+app.controller('RulesController', ['$scope', RulesController]);

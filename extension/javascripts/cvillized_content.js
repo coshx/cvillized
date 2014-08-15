@@ -41,6 +41,7 @@ var cvillized = {
 
   /* cvillize the page and register an event listener for changes to the page */
   init: function() {
+    cvillized.registerDOMChangeListener();
     cvillized.requestRules();
     cvillized.listenForRulesUpdate();
   },
@@ -48,23 +49,25 @@ var cvillized = {
   listenForRulesUpdate: function() {
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       if (request.rules) {
-        cvillized.rules = request.rules;
-        _.each(cvillized.rules, setRuleComplementaryParams);
-        cvillized.cvillize();
+        cvillized.updateRules(request.rules);
       }
     });
   },
 
   requestRules: function() {
     chrome.runtime.sendMessage({rulesRequest: true}, function(response) {
-      cvillized.rules = response.rules;
-      _.each(cvillized.rules, setRuleComplementaryParams);
-      $(function() {
-        cvillized.cvillize();
-        cvillized.registerDOMChangeListener();
-      });
+      cvillized.updateRules(response.rules);
     });
   },
+
+  updateRules: function(rawRules) {
+    cvillized.rules = [];
+    _.each(rawRules, function(rawRule) {
+      cvillized.rules.push(new Rule(rawRule));
+    });
+    cvillized.cvillize();
+  },
+  
 
   registerDOMChangeListener: function() {
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
@@ -101,23 +104,16 @@ var cvillized = {
 
   applyRule: function(rule, rule_index) {
     console.log("Applying rule " + rule_index + ": " + rule.description);
-    // TODO: check if rule.domain matches current page
 
     // Find all the matches on current page and replace them
-    var selector = cvillized.globalSelector();
-    $(selector).each( function() {
-      var globalHtml = $(this).html();
-      // Ignore attributes thanks to split, so we don't replace some text in some 
-      // attribute by an image
-      var reg = new RegExp(/(?:(?: *[a-z-]+= *(?:\"|\').*?(?:\"|\'))+)/gim);
-      var globalHtmlPartsWithoutAttributes = globalHtml.split(reg);
-      _.each(globalHtmlPartsWithoutAttributes, function(partialHtml) {
-        // Apply the rule for each partial
-        var newPartialHtml = partialHtml.replace(rule.search, rule.html);
-        globalHtml = globalHtml.replace(partialHtml, newPartialHtml);
-      });
-      $(this).html(globalHtml);
-    });
+    var contentElement = "body";
+    if ($("#contentArea").length > 0) {
+      contentElement = "#contentArea";
+    }
+    var contentHtml = $(contentElement).html();
+    contentHtml = contentHtml.replace(rule.searchRegExp(), rule.html());
+
+    $(contentElement).html(contentHtml);
   },
 
   cvillize: function() {
