@@ -4,62 +4,30 @@ function decodeHtml(input){
   return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
 }
 
-function Rule(data) {
-  this.description = data.description;
-  this.domain = data.domain;
-  this.search = data.search;
-  this.img = data.img;
-  this.imgAlt = data.imgAlt;
-  if (!this.imgAlt) {
-    this.imgAlt = 'cvillized replacement';
-  }
-  this.txt = data.txt;
-
-  this.html = function() {
-    var templateHtml, templateParams;
-
-    if (this.img) {
-      templateHtml = '<img src="<%= img %>" alt="<%= imgAlt %>" height="24px"/>';
-      templateParams = {
-        img: chrome.extension.getURL(this.img),
-        imgAlt: this.imgAlt
-      }
-    } else if (this.txt) {
-      templateHtml = '<%= txt %>';
-      templateParams = { txt: this.txt };
-    } else {
-      templateHtml = '<b>[hidden by cvillized]</b>';
-      templateParams = {}
-    }
-
-    return _.template(templateHtml, templateParams);
-  }
-}
-
 var cvillized = {
-  rules: [
-    new Rule({
-      description: "globally turn the f-word into an f-bomb",
-      search: /fuck/ig,
-      img: 'images/f-bomb.png',
-      imgAlt: 'f-bomb'
-    }),
-    new Rule({
-      description: "globally turn poo words into poo",
-      search: /poop(?:y)?|shit(?:ty)?|crap(?:py)?/ig,
-      img: 'images/poo.png'
-    }),
-    new Rule({
-      description: "stupid is as stupid does",
-      search: '/stupid[a-z]*\b/ig',
-      txt: 'stupendous'
-    })
-  ],
+  rules: [],
 
   /* cvillize the page and register an event listener for changes to the page */
   init: function() {
     cvillized.cvillize();
     cvillized.registerDOMChangeListener();
+    cvillized.requestRules();
+    cvillized.listenForRulesUpdate();
+  },
+
+  listenForRulesUpdate: function() {
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+      if (request.rules) {
+        cvillized.rules = request.rules;
+        cvillized.cvillize();
+      }
+    });
+  },
+
+  requestRules: function() {
+    chrome.runtime.sendMessage({rulesRequest: true}, function(response) {
+      cvillized.rules = response.rules;
+    });
   },
 
   registerDOMChangeListener: function() {
@@ -77,14 +45,16 @@ var cvillized = {
 
   globalSelector: function() {
     if(window.location.host.indexOf("facebook.com") != -1) {
-      return "[role^=article], .UFICommentBody";
+      if($("[role^=article], .UFICommentBody").length == 0) {
+        return "[role^=article], .UFICommentBody";
+      }
     }
     else if(window.location.host.indexOf("google.") != -1) {
-      return "#rcnt";
+      if($("#res").length == 0) {
+        return "#res";
+      }
     }
-    else {
-      return "body";
-    }
+    return "body";
   },
 
   applyRule: function(rule, rule_index) {
@@ -94,13 +64,18 @@ var cvillized = {
     // Find all the matches on current page and replace them
     var selector = cvillized.globalSelector();
     $(selector).each( function() {
-      $(this).html($(this).html().replace(rule.search, rule.html()));
+      var globalHtml = $(this).html();
+      // Ignore attributes thanks to split, so we don't replace some text in some 
+      // attribute by an image
+      var reg = new RegExp(/(?:(?: *[a-z-]+= *(?:\"|\').*?(?:\"|\'))+)/gim);
+      var globalHtmlPartsWithoutAttributes = globalHtml.split(reg);
+      _.each(globalHtmlPartsWithoutAttributes, function(partialHtml) {
+        // Apply the rule for each partial
+        var newPartialHtml = partialHtml.replace(rule.search, rule.html());
+        globalHtml = globalHtml.replace(partialHtml, newPartialHtml);
+      });
+      $(this).html(globalHtml);
     });
-
-    // var globalHtml = $(selector).html();
-    // globalHtml = globalHtml.replace(rule.search, rule.html());
-
-    // $(selector).html(globalHtml);
   },
 
   cvillize: function() {
