@@ -59,8 +59,10 @@ var cvillized = {
     chrome.runtime.sendMessage({rulesRequest: true}, function(response) {
       cvillized.rules = response.rules;
       _.each(cvillized.rules, setRuleComplementaryParams);
-      cvillized.cvillize();
-      cvillized.registerDOMChangeListener();
+      $(function() {
+        cvillized.cvillize();
+        cvillized.registerDOMChangeListener();
+      });
     });
   },
 
@@ -70,10 +72,11 @@ var cvillized = {
     var observer = new MutationObserver(function(mutations, observer) {
       cvillize();
     });
-    observer.observe(document, {
+    observer.observe(document.querySelector(cvillized.globalSelector()), {
       subtree: true,
       childList: true,
-      attributes: false
+      attributes: false,
+      characterData: true
     });
   },
 
@@ -81,6 +84,11 @@ var cvillized = {
     if(window.location.host.indexOf("facebook.com") != -1) {
       if($("[role^=article], .UFICommentBody").length > 0) {
         return "[role^=article], .UFICommentBody";
+      }
+    }
+    else if(window.location.host.indexOf("twitter.com") != -1) {
+      if($(".ProfileTweet-text, .tweet-text, .tweet").length > 0) {
+        return ".ProfileTweet-text, .tweet-text, .tweet";
       }
     }
     else if(window.location.host.indexOf("google.") != -1) {
@@ -105,9 +113,6 @@ var cvillized = {
       var globalHtmlPartsWithoutAttributes = globalHtml.split(reg);
       _.each(globalHtmlPartsWithoutAttributes, function(partialHtml) {
         // Apply the rule for each partial
-        // if(rule_index == 1) {
-        //   debugger;
-        // }
         var newPartialHtml = partialHtml.replace(rule.search, rule.html);
         globalHtml = globalHtml.replace(partialHtml, newPartialHtml);
       });

@@ -80,7 +80,6 @@ var cvillizedBackground = {
     });
   },
   listenForRulesRequests: function() {
-    console.log("kikoulool");
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       if (request.rulesRequest) {
         console.log("Got a rules request!");
